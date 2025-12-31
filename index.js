@@ -103,7 +103,7 @@ class Ball {
 		this.sphereAnimation.style.transform = `rotateX(${this.rotation[0]}deg) rotateY(${this.rotation[1]}deg) rotateZ(${this.rotation[2]}deg)`
 	}
 
-	drawOld() {
+	moveToDrawn() {
 		this.drawn = true;
 		this.sphere.style.transform = "scale(1.5)"
 		this.sphere.style.zIndex = 999
@@ -125,13 +125,7 @@ class Ball {
 		this.sphere.style.zIndex = 999
 		this.sphereAnimation.style.transform = ""
 		setTimeout(()=>{
-			const drawnBalls = document.getElementById("drawnBalls");
-			drawnBalls.appendChild(this.sphere);
-			this.sphere.style.transform = ""
-			const left = (((this.number - 1) % 10) * 65) + 5
-			const top = (Math.floor((this.number - 1) / 10) * 80) + 5;
-			this.sphere.style.left = left + "px";
-			this.sphere.style.top = top + "px";
+			this.moveToDrawn();
 		}, 3000)
 	}
 }
@@ -144,7 +138,7 @@ function loop() {
 
 
 function init() {
-	socket = new WebSocket("wss://134.65.23.38:25565");
+	socket = new WebSocket("wss://pm.dounford.tech");
 	socket.onmessage = (e) => {
 		const data = e.data;
 		const [type, message] = data.split("=");
@@ -152,7 +146,7 @@ function init() {
 			case "DRAWN": {
 				const values = message.split(",")
 				values.forEach(ball => {
-					drawOldBall(ball);
+					moveToDrawn(ball);
 				})
 			} break;
 			case "DRAW": {
@@ -160,11 +154,15 @@ function init() {
 			} break;
 			case "WINNERS": {
 				const winnerDiv = document.getElementById("winners");
+				winnerDiv.innerHTML = "";
 				const values = message.split(",")
-				values.forEach(winner => {
-					const span = document.createElement("span");
-					span.innerText = winner.toUpperCase();
-					winnerDiv.appendChild(span);
+				values.forEach((winner, index) => {
+					const strong = document.createElement("strong");
+					if(index === 0) {
+						strong.innerText = "•"
+					}
+					strong.innerText += " " + winner.toUpperCase() + " •";
+					winnerDiv.appendChild(strong);
 				})
 			} break;
 		}
@@ -182,8 +180,20 @@ function drawBall(number) {
 	drawn.draw();
 }
 
-function drawOldBall(number) {
+function moveToDrawn(number) {
 	if(number == "") return
 	const drawn = balls.find(ball => ball.number == number);
-	drawn.drawOld();
+	drawn.moveToDrawn();
 }
+
+function scaleContainer() {
+    const container = document.getElementById('container');
+
+    const scale = Math.min(window.innerWidth / 1280, window.innerHeight / 650);
+
+    container.style.transform = `scale(${scale})`;
+}
+
+
+window.addEventListener('load', scaleContainer);
+window.addEventListener('resize', scaleContainer);

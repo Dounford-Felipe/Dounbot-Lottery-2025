@@ -1,18 +1,46 @@
-body {
-  background: #555;
+@media (max-width: 1100px) {
+    #container {
+        flex-direction: column;
+        gap: 20px; /* Espaço entre o globo e a lista de bolas */
+    }
+    
+    #ballContainer {
+        margin-right: 0; /* Remove a margem lateral no mobile */
+    }
 }
 
-#winners {
-    display: flex;
-    justify-content: space-around;
+body {
+  background: #555;
+  height: 100vh;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+@keyframes marquee-infinite {
+    0% { left: 100%; }
+    100% { left: -50%; }
+}
+
+#winnersContainer {
     color: white;
     font-size: larger;
     font-weight: bold;
+    overflow: hidden;
+}
+
+#winners {
+    position: relative;
+    animation: marquee-infinite 20s linear infinite;
 }
 
 #container {
     display: flex;
     align-items: center;
+    justify-content: space-around;
+    width: 100%;
+    max-width: 1280px;
+    margin: 0 auto;
+    transform-origin: top center;
 }
 #ballContainer {
     position: relative;
@@ -20,7 +48,7 @@ body {
     height: 500px;
     border: 2px solid white;
     border-radius: 50%; /* Torna o container um círculo */
-    margin: 50px;
+    margin-right: 50px;
     overflow: hidden;
     background: #333;
 }
